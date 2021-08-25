@@ -68,8 +68,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 //		security.checkTokenAccess("isAuthenticated()");
-		security.checkTokenAccess("permitAll()") //Aula: https://app.algaworks.com/aulas/2237/configurando-o-endpoint-de-introspeccao-de-tokens-no-authorization-server
-	    .allowFormAuthenticationForClients();
+		security.checkTokenAccess("permitAll()") //Aula que explica o .checkTokenAccess("permitAll() : https://app.algaworks.com/aulas/2237/configurando-o-endpoint-de-introspeccao-de-tokens-no-authorization-server
+	    .allowFormAuthenticationForClients();// Aula que explica o .allowFormAuthenticationForClients():  https://app.algaworks.com/aulas/2251/testando-o-fluxo-authorization-code-com-pkce-com-o-metodo-plain
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 	JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-	jwtAccessTokenConverter.setSigningKey("algaworks");
+	jwtAccessTokenConverter.setSigningKey("KJNFUHWKFWKF98723721NQDLQNDQDJ81UNLDNadasldnasldnladas123");
 
 	return jwtAccessTokenConverter;
     }
