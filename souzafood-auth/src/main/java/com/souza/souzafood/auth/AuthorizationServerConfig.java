@@ -31,6 +31,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private JwtKeyStoreProperties jwtKeyStoreProperties;    
 	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -70,8 +73,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 //		security.checkTokenAccess("isAuthenticated()");
-		security.checkTokenAccess("permitAll()") //Aula que explica o .checkTokenAccess("permitAll() : https://app.algaworks.com/aulas/2237/configurando-o-endpoint-de-introspeccao-de-tokens-no-authorization-server
-	    .allowFormAuthenticationForClients();// Aula que explica o .allowFormAuthenticationForClients():  https://app.algaworks.com/aulas/2251/testando-o-fluxo-authorization-code-com-pkce-com-o-metodo-plain
+		security.checkTokenAccess("permitAll()") //Aula que explica o .checkTokenAccess("permitAll()  https://app.algaworks.com/aulas/2237/configurando-o-endpoint-de-introspeccao-de-tokens-no-authorization-server
+	    .tokenKeyAccess("permitAll()") //Aula que explica o .tokenKeyAccess  https://app.algaworks.com/aulas/2265/extraindo-a-chave-publica-no-formato-pem
+		.allowFormAuthenticationForClients();// Aula que explica o .allowFormAuthenticationForClients():  https://app.algaworks.com/aulas/2251/testando-o-fluxo-authorization-code-com-pkce-com-o-metodo-plain
 	}
 
 	@Override
@@ -84,15 +88,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		     .tokenGranter(tokenGranter(endpoints));
 	}
 	
-	
 	@Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 		var jwtAccessTokenConverter = new JwtAccessTokenConverter();
 	//	jwtAccessTokenConverter.setSigningKey("KJNFUHWKFWKF98723721NQDLQNDQDJ81UNLDNadasldnasldnladas123"); Aula: https://app.algaworks.com/aulas/2260/configurando-o-resource-server-para-jwt-assinado-com-chave-simetrica
 	
-		var jksResource = new ClassPathResource("keystores/souzafood.jks");
-		var keyStorePass = "123456";
-		var keyPairAlias = "souzafood";
+		var jksResource = new ClassPathResource(jwtKeyStoreProperties.getPath());
+		var keyStorePass = jwtKeyStoreProperties.getPassword();
+		var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
 		
 		var keyStoreKeyFactory = new KeyStoreKeyFactory(jksResource, keyStorePass.toCharArray());
 		var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
