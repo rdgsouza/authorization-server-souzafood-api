@@ -1,4 +1,4 @@
-package com.souza.souzafood.auth;
+package com.souza.souzafood.auth.core;
 
 import javax.validation.constraints.NotBlank;
 
