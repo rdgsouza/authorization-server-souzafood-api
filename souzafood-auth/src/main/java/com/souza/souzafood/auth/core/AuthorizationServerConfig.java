@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
@@ -53,6 +54,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		    .withClient("foodanalytics")
 		    .secret(passwordEncoder.encode(""))
 		    .authorizedGrantTypes("authorization_code")
+//		    .autoApprove(true) // Se quiser que pule a tela do OAuth Approval adicione o .autoApprove(true) Fonte: https://app.algaworks.com/forum/topicos/80555/duvida-sobre-autorizacao
 		    .scopes("write", "read")
 		    .redirectUris("http://www.foodanalytics.local:8082")
 		    
@@ -83,11 +85,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+		var enhancerChain = new TokenEnhancerChain();
+	    enhancerChain.setTokenEnhancers(
+	    		Arrays.asList(new JwtCustomClaimsTokenEnhacer(), jwtAccessTokenConverter()));
+				
+	    
 		endpoints
 		     .authenticationManager(authenticationManager)
 		     .userDetailsService(userDetailsService)
 		     .reuseRefreshTokens(false)
 		     .accessTokenConverter(jwtAccessTokenConverter())
+		     .tokenEnhancer(enhancerChain)
 		     .approvalStore(approvalStore(endpoints.getTokenStore()))
 		     .tokenGranter(tokenGranter(endpoints));
 	}
