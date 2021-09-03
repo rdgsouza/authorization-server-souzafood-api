@@ -46,7 +46,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		    .withClient("souzafood-web")
 		    .secret(passwordEncoder.encode("web123"))
 		    .authorizedGrantTypes("password","refresh_token")
-		    .scopes("write", "read")
+		    .scopes("READ")
 		    .accessTokenValiditySeconds(6 * 60 * 60) // 6 horas
 		    .refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 dias
 		
@@ -55,20 +55,21 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		    .secret(passwordEncoder.encode(""))
 		    .authorizedGrantTypes("authorization_code")
 //		    .autoApprove(true) // Se quiser que pule a tela do OAuth Approval adicione o .autoApprove(true) Fonte: https://app.algaworks.com/forum/topicos/80555/duvida-sobre-autorizacao
-		    .scopes("write", "read")
+		    .scopes("WRITE", "READ")
 		    .redirectUris("http://www.foodanalytics.local:8082")
+//		    .redirectUris("https://oauth.pstmn.io/v1/callback") // https://app.algaworks.com/forum/topicos/83180/solicitacao-de-token-e-escopo
 		    
 		.and()
 		    .withClient("webadmin")
 		    .authorizedGrantTypes("implicit")
-		    .scopes("write", "read")
+		    .scopes("WRITE", "READ")
 		    .redirectUris("http://aplicacao-cliente")
 		    
 		.and()
 		    .withClient("faturamento")
 		    .secret(passwordEncoder.encode("faturamento123"))
 		    .authorizedGrantTypes("client_credentials")
-		    .scopes("write", "read")
+		    .scopes("WRITE", "READ")
 		    
 		.and()
 		    .withClient("checktoken")
