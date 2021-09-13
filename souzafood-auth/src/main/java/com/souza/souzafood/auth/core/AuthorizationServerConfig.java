@@ -2,13 +2,14 @@ package com.souza.souzafood.auth.core;
 
 import java.util.Arrays;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -27,8 +28,8 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter	{
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+//	@Autowired
+//	private PasswordEncoder passwordEncoder; Aula: https://app.algaworks.com/aulas/2238/configurando-o-resource-server-com-a-nova-stack-do-spring-security
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -39,42 +40,50 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private JwtKeyStoreProperties jwtKeyStoreProperties;    
 	
+	@Autowired
+	private DataSource dataSource;
+	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients
-		.inMemory()
-		    .withClient("souzafood-web")
-		    .secret(passwordEncoder.encode("web123"))
-		    .authorizedGrantTypes("password","refresh_token")
-		    .scopes("WRITE", "READ")
-		    .accessTokenValiditySeconds(6 * 60 * 60) // 6 horas
-		    .refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 dias
-		
-		.and()
-		    .withClient("foodanalytics")
-		    .secret(passwordEncoder.encode(""))
-		    .authorizedGrantTypes("authorization_code")
-//		    .autoApprove(true) // Se quiser que pule a tela do OAuth Approval adicione o .autoApprove(true) Fonte: https://app.algaworks.com/forum/topicos/80555/duvida-sobre-autorizacao
-		    .scopes("WRITE", "READ")
-		    .redirectUris("http://www.foodanalytics.local:8082")
-//		    .redirectUris("https://oauth.pstmn.io/v1/callback") // https://app.algaworks.com/forum/topicos/83180/solicitacao-de-token-e-escopo
-		    
-		.and()
-		    .withClient("webadmin")
-		    .authorizedGrantTypes("implicit")
-		    .scopes("WRITE", "READ")
-		    .redirectUris("http://aplicacao-cliente")
-		    
-		.and()
-		    .withClient("faturamento")
-		    .secret(passwordEncoder.encode("faturamento123"))
-		    .authorizedGrantTypes("client_credentials")
-		    .scopes("WRITE", "READ")
-		    
-		.and()
-		    .withClient("checktoken")
-		    .secret(passwordEncoder.encode("check123")); //Aula: https://app.algaworks.com/aulas/2238/configurando-o-resource-server-com-a-nova-stack-do-spring-security
+//    Configuracao do cliente no banco de dados usando o metodo jdbc 
+		clients.jdbc(dataSource); 
 	}
+	
+//	Configuracao do cliente em memoria
+//		clients
+//		.inMemory()
+//		    .withClient("souzafood-web")
+//		    .secret(passwordEncoder.encode("web123"))
+//		    .authorizedGrantTypes("password","refresh_token")
+//		    .scopes("WRITE", "READ")
+//		    .accessTokenValiditySeconds(6 * 60 * 60) // 6 horas
+//		    .refreshTokenValiditySeconds(60 * 24 * 60 * 60) // 60 dias
+//		
+//		.and()
+//		    .withClient("foodanalytics")
+//		    .secret(passwordEncoder.encode(""))
+//		    .authorizedGrantTypes("authorization_code")
+////		    .autoApprove(true) // Se quiser que pule a tela do OAuth Approval adicione o .autoApprove(true) Fonte: https://app.algaworks.com/forum/topicos/80555/duvida-sobre-autorizacao
+//		    .scopes("WRITE", "READ")
+//		    .redirectUris("http://www.foodanalytics.local:8082")
+////		    .redirectUris("https://oauth.pstmn.io/v1/callback") // https://app.algaworks.com/forum/topicos/83180/solicitacao-de-token-e-escopo
+//		    
+//		.and()
+//		    .withClient("webadmin")
+//		    .authorizedGrantTypes("implicit")
+//		    .scopes("WRITE", "READ")
+//		    .redirectUris("http://aplicacao-cliente")
+//		    
+//		.and()
+//		    .withClient("faturamento")
+//		    .secret(passwordEncoder.encode("faturamento123"))
+//		    .authorizedGrantTypes("client_credentials")
+//		    .scopes("WRITE", "READ")
+//		    
+//		.and()
+//		    .withClient("checktoken")
+//		    .secret(passwordEncoder.encode("check123")); //Aula: https://app.algaworks.com/aulas/2238/configurando-o-resource-server-com-a-nova-stack-do-spring-security
+//	}
 	
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
