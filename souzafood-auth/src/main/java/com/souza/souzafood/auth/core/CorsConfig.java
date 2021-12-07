@@ -23,7 +23,7 @@ public class CorsConfig {
 		config.setAllowedHeaders(Collections.singletonList("*"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/oauth/token", config);
+		source.registerCorsConfiguration("/**", config); //https://app.algaworks.com/aulas/2295/juntando-o-resource-server-com-o-authorization-server-no-mesmo-projeto
 
 		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>();
 		bean.setFilter(new CorsFilter(source));

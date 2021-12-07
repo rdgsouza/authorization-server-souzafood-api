@@ -126,7 +126,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		var jksResource = new ClassPathResource(jwtKeyStoreProperties.getPath());
 		var keyStorePass = jwtKeyStoreProperties.getPassword();
 		var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
-		
+//		https://app.algaworks.com/aulas/2263/assinando-o-jwt-com-rsa-sha-256-chave-assimetrica
 		var keyStoreKeyFactory = new KeyStoreKeyFactory(jksResource, keyStorePass.toCharArray());
 		var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
 		
